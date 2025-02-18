@@ -1,3 +1,5 @@
+pragma solidity ^0.8.28;
+
 contract Bank {
     mapping(address => uint256) public balanceOf;
 
