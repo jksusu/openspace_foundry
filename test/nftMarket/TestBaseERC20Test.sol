@@ -11,6 +11,5 @@ contract TestBankTest is Test {
         baseERC20 = new BaseERC20();
     }
 
-    function test_isContract() public {
-    }
+    function test_isContract() public { }
 }

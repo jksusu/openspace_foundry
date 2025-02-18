@@ -33,22 +33,17 @@ contract NFTMarket {
         listings[tokenId] = Listing({ seller: msg.sender, price: price });
     }
 
-    // 购买 NFT
-    function buyNFT(uint256 tokenId) external {
+    function buyNFT(uint256 tokenId) private {
         Listing memory listing = listings[tokenId];
         require(listing.price > 0, "NFT not listed");
-        //调用 token 转账函数转账给交易所，交易所转账给卖家 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
-        token.transferWithCallback(msg.sender, address(this), listing.price);
         token.transfer(listing.seller, listing.price);
-        //需要把 nft 转给买家，需要交易所上架的时候把nft转移到交易所，或者授权给交易所，这里直接转移到付款人的地址上去
-        nft.safeTransferFrom(address(this), msg.sender, tokenId);
-
-        delete listings[tokenId]; //删除上架列表
+        nft.transferFrom(address(this), msg.sender, tokenId);
+        delete listings[tokenId];
     }
 
-    //收到转账后，sender调用此方法用户改变 合约状态
-    function tokensReceived(address from, uint256 amount) external returns (bool) {
-        balances[address(token)][from] += amount;
+    function tokensReceived(address from, uint256 amount, uint256 tokenId) external returns (bool) {
+        require(amount == listings[tokenId].price, "Insufficient amount");
+        buyNFT(tokenId);
         emit TokensReceived(from, amount);
         return true;
     }

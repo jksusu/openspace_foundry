@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 interface ITokenReceiver {
-    function tokensReceived(address from, uint256 amount) external returns (bool);
+    function tokensReceived(address from, uint256 amount, uint256 tokenId) external returns (bool);
 }
 
 contract BaseERC20 is ERC20 {
@@ -12,10 +12,10 @@ contract BaseERC20 is ERC20 {
         _mint(msg.sender, 100000000 * 10 ** 18);
     }
 
-    function transferWithCallback(address _from, address _to, uint256 amount) public returns (bool) {
-        _transfer(_from, _to, amount);
+    function transferWithCallback(address _to, uint256 amount, uint256 tokenId) public returns (bool) {
+        _transfer(msg.sender, _to, amount);
         if (isContract(_to)) {
-            (bool success) = ITokenReceiver(_to).tokensReceived(msg.sender, amount);
+            (bool success) = ITokenReceiver(_to).tokensReceived(msg.sender, amount, tokenId);
             require(success, "Callback failed");
         }
         return true;
