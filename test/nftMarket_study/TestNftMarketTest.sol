@@ -59,12 +59,26 @@ contract TestNftMarketTest is Test {
         vm.startPrank(nftBuyer); //后续获取到的msg都是nftBuyer的
         //断言买家余额是否足够购买nft
         assertEq(baseERC20Instance.balanceOf(nftBuyer), nftToBuyUserAmount);
+        //断言低于上市价格购买 判断错误是否等于
+        vm.expectRevert("Insufficient amount");//断言错误的方法
+        baseERC20Instance.transferWithCallback(address(nftMarketInstance), nftPrice - 1, tokenId);
+
         //买家付款给交易所
         baseERC20Instance.transferWithCallback(address(nftMarketInstance), nftPrice, tokenId);
         //检查卖家是否收到款项
         assertEq(baseERC20Instance.balanceOf(nftSeller), nftPrice);
         //检查nft是否已经到了买家
         assertEq(myNFTInstance.ownerOf(tokenId), nftBuyer);
+
+        //检查买家余额是否正确
+        assertEq(baseERC20Instance.balanceOf(nftBuyer), nftToBuyUserAmount - nftPrice);
+
+        //断言购买一个不存在的nft
+        vm.expectRevert("does not exist");
+        baseERC20Instance.transferWithCallback(address(nftMarketInstance), nftPrice, tokenId);
+
         vm.stopPrank();
+
+        
     }
 }

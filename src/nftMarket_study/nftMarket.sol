@@ -46,6 +46,7 @@ contract NFTMarket {
     }
 
     function tokensReceived(address from, uint256 amount, uint256 tokenId) external returns (bool) {
+        require(listings[tokenId].seller != address(0), "does not exist");
         require(amount == listings[tokenId].price, "Insufficient amount");
         buyNFT(from, tokenId);
         emit TokensReceived(from, amount);
