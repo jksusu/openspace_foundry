@@ -24,6 +24,10 @@ contract NFTMarket {
         nft = _nft;
     }
 
+    function getNftByTokenId(uint256 tokenId) public view returns (Listing memory) {
+        return listings[tokenId];
+    }
+
     // 上架 NFT
     function list(uint256 tokenId, uint256 price) external {
         //检查上架的nft拥有者是否是当前发起交易的用户
@@ -33,17 +37,17 @@ contract NFTMarket {
         listings[tokenId] = Listing({ seller: msg.sender, price: price });
     }
 
-    function buyNFT(uint256 tokenId) private {
+    function buyNFT(address buyAddress, uint256 tokenId) private {
         Listing memory listing = listings[tokenId];
         require(listing.price > 0, "NFT not listed");
         token.transfer(listing.seller, listing.price);
-        nft.transferFrom(address(this), msg.sender, tokenId);
+        nft.transferFrom(address(this), buyAddress, tokenId);
         delete listings[tokenId];
     }
 
     function tokensReceived(address from, uint256 amount, uint256 tokenId) external returns (bool) {
         require(amount == listings[tokenId].price, "Insufficient amount");
-        buyNFT(tokenId);
+        buyNFT(from, tokenId);
         emit TokensReceived(from, amount);
         return true;
     }
