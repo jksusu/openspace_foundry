@@ -1,28 +1,21 @@
-// // SPDX-License-Identifier: UNLICENSED
-// pragma solidity ^0.8.13;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
 
-// import { Test, console } from "forge-std/Test.sol";
-// import { Bank } from "../src/Bank.sol";
+import {Test, console} from "forge-std/Test.sol";
+import {Bank} from "../src/Bank.sol";
 
-// contract TestBankTest is Test {
-//     Bank public bank;
+contract CounterTest is Test {
+    Bank public bank;
 
-//     function setUp() public {
-//         bank = new Bank();
-//     }
+    function setUp() public {
+        bank = new Bank();
+    }
 
-//     function test_depositETH() public {
-//         uint256 oldBanlance = address(this).balance; //当前钱包余额
-//         uint256 depositAmount = 1 ether; //存款金额
+    function test_depositETH() public {
+        vm.expectEmit(true, false, false, true);
+        emit Bank.Deposit(address(this), 100);
 
-//         vm.deal(address(this), depositAmount);
-//         bank.depositETH{ value: depositAmount }();
-
-//         // vm.expectEmit(true, true, false, true);
-//         // emit bank.Deposit(address(this), depositAmount);
-
-//         // 检查存款额更新
-//         assertEq(bank.balanceOf(address(this)), depositAmount);
-//         assertEq(address(this).balance, oldBanlance - depositAmount);
-//     }
-// }
+        bank.depositETH{value: 100}();
+        assertEq(address(bank).balance, 100);
+    }
+}
