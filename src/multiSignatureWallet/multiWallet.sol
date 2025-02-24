@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+/**
+ *  0x617F2E2fD72FD9D5503197092aC168c91465E7f2
+ *  [0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db],2
+ */
 contract MultWallet {
     address[] owners; //多签持有人
     uint256 public requiredNum; //最少签名人数
@@ -42,8 +46,8 @@ contract MultWallet {
 
     constructor(address[] memory _owners, uint256 _requiredNum) {
         if (_owners.length < 3) revert InvalidOwnersLength();
-        if (requiredNum > _owners.length) revert TransactionPeolpleMin();
-        owners = owners;
+        if (_requiredNum > _owners.length) revert TransactionPeolpleMin();
+        owners = _owners;
         requiredNum = _requiredNum;
     }
 
@@ -72,11 +76,10 @@ contract MultWallet {
      */
     function confirmTransaction(uint256 _transactionId) public onlyOwner {
         if (transactions[_transactionId].executed) revert TransactionHasExecuted();
-        if (transactionsConfirmed[_transactionId][msg.sender]) revert TransactionHasConfirmed();
+        // if (!transactionsConfirmed[_transactionId][msg.sender]) revert TransactionHasConfirmed();
 
         transactionsConfirmed[_transactionId][msg.sender] = true;
         transactions[_transactionId].confirmations++;
-        if (transactions[_transactionId].confirmations >= requiredNum) transactions[_transactionId].executed = true;
 
         emit TransactionConfirmed(msg.sender, _transactionId);
     }
@@ -94,9 +97,13 @@ contract MultWallet {
     function execTransaction(uint256 _transactionId) public {
         if (transactions[_transactionId].executed) revert TransactionHasExecuted();
         if (transactions[_transactionId].confirmations < requiredNum) revert TransactionPeolpleMin();
+        transactions[_transactionId].executed = true;
         (bool success,) = transactions[_transactionId].to.call(transactions[_transactionId].data);
         if (!success) revert TransactionHasExecFaild();
-
         emit TransactionExecuted(msg.sender, _transactionId);
+    }
+
+    function getOwners() public view returns (address[] memory) {
+        return owners;
     }
 }
