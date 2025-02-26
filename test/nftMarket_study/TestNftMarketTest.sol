@@ -60,7 +60,7 @@ contract TestNftMarketTest is Test {
         //断言买家余额是否足够购买nft
         assertEq(baseERC20Instance.balanceOf(nftBuyer), nftToBuyUserAmount);
         //断言低于上市价格购买 判断错误是否等于
-        vm.expectRevert("Insufficient amount");//断言错误的方法
+        vm.expectRevert("Insufficient amount"); //断言错误的方法
         baseERC20Instance.transferWithCallback(address(nftMarketInstance), nftPrice - 1, tokenId);
 
         //买家付款给交易所
