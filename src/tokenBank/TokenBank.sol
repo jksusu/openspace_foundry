@@ -1,17 +1,12 @@
 pragma solidity ^0.8.28;
 
-//合约接口
-interface IERC2612 {
-    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
-    function nonces(address owner) external view returns (uint256);
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-}
+import  "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
 /**
  * 合约部署地址 0xd71f0f00cce985a29dd2d5757ddaa2b120c370ee
  */
 contract TokenBank {
-    IERC2612 public token; //需要实现的token
+    ERC20Permit public token; //需要实现的token
     bool public status = true; //合约状态
     address[] public owners; //合约管理员
     address[] public tokenContractAddressArr; //支持的合约数组
@@ -106,7 +101,7 @@ contract TokenBank {
     function permitDeposit(address tokenAddress, address from, uint256 amount, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external tokenSupported(tokenAddress, 1) validValue(amount) {
         if (block.timestamp > deadline) revert SignatureExpired();
 
-        IERC2612 permitToken = IERC2612(tokenAddress); // 修改变量名
+        ERC20Permit permitToken = ERC20Permit(tokenAddress); // 修改变量名
         permitToken.permit(from, address(this), amount, deadline, v, r, s);
         if (!permitToken.transferFrom(from, address(this), amount)) revert TransferFailed();
 
@@ -127,32 +122,6 @@ contract TokenBank {
      */
     function getDepositByToken(address userAddress, address tokenAddress) external view returns (uint256) {
         return tokenBalanceOf[userAddress][tokenAddress];
-    }
-
-    /**
-     * 获取用户所有余额
-     */
-    function getDepositAll(address userAddress) external view returns (address[] memory, uint256[] memory) {
-        uint256 tokenCount = tokenContractAddressArr.length;
-        address[] memory tempAddresses = new address[](tokenCount);
-        uint256[] memory tempBalances = new uint256[](tokenCount);
-        uint256 validCount = 0;
-        for (uint256 i = 0; i < tokenCount; i++) {
-            address _tokenAddress = tokenContractAddressArr[i];
-            uint256 userBalance = tokenBalanceOf[userAddress][_tokenAddress];
-            if (userBalance > 0) {
-                tempAddresses[validCount] = _tokenAddress;
-                tempBalances[validCount] = userBalance;
-                validCount++;
-            }
-        }
-        address[] memory tokenAddress = new address[](validCount);
-        uint256[] memory balance = new uint256[](validCount);
-        for (uint256 i = 0; i < validCount; i++) {
-            tokenAddress[i] = tempAddresses[i];
-            balance[i] = tempBalances[i];
-        }
-        return (tokenAddress, balance);
     }
 
     /**

@@ -107,17 +107,6 @@ contract TestTokenBankTest is Test {
         vm.stopPrank();
     }
 
-    function testGetDepositAllTest() public {
-        // vm.startPrank(user);
-        // tokenBank.depositeByToken(address(aksErc2612Token), 100);
-        // assertEq(tokenBank.getDepositByToken(user,address(aksErc2612Token)), 100);
-        // vm.stopPrank();
-
-        // (address[] memory tokenAddress, uint256[] memory balances) = tokenBank.getDepositAll(user);
-        // console.log(balances[0]);
-        // console.log(tokenAddress[0]);
-    }
-
     function testPermitDepositTest() public {
         // 设置时间戳
         vm.warp(1740586075);
