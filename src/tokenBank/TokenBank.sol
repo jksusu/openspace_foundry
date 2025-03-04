@@ -1,6 +1,6 @@
 pragma solidity ^0.8.28;
 
-import  "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
 /**
  * 合约部署地址 0xd71f0f00cce985a29dd2d5757ddaa2b120c370ee
