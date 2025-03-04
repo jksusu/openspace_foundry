@@ -8,6 +8,7 @@ import { IAllowanceTransfer } from "permit2/src/interfaces/IAllowanceTransfer.so
 import { ISignatureTransfer } from "permit2/src/interfaces/ISignatureTransfer.sol";
 import { IPermit2 } from "permit2/src/interfaces/IPermit2.sol";
 
+//forge test --mc TestTokenBankPremit2Test --rpc-url http://127.0.0.1:8545 -vvvv 执行测试命令
 contract TestTokenBankPremit2Test is Test {
     IPermit2 public permit2;
     TokenBankPremit2 public bank;
@@ -22,7 +23,7 @@ contract TestTokenBankPremit2Test is Test {
     uint256 signUserPrivateKey = 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a; // 签名用户私钥
 
     function setUp() public {
-        vm.createSelectFork("http://127.0.0.1:8545");
+        // vm.createSelectFork("http://127.0.0.1:8545");
         vm.startPrank(owner);
 
         // 假设 Permit2 已经在指定地址部署
@@ -56,16 +57,10 @@ contract TestTokenBankPremit2Test is Test {
             ISignatureTransfer.PermitTransferFrom({ permitted: ISignatureTransfer.TokenPermissions({ token: address(token), amount: amount }), nonce: nonce, deadline: deadline });
 
         // 计算 EIP-712 哈希
-        bytes32 typeHash = keccak256(
-            "PermitTransferFrom(TokenPermissions permitted,address spender,uint256 nonce,uint256 deadline)TokenPermissions(address token,uint256 amount)"
-        );
+        bytes32 typeHash = keccak256("PermitTransferFrom(TokenPermissions permitted,address spender,uint256 nonce,uint256 deadline)TokenPermissions(address token,uint256 amount)");
 
         // 计算 TokenPermissions 哈希
-        bytes32 tokenPermissionsHash = keccak256(abi.encode(
-            keccak256("TokenPermissions(address token,uint256 amount)"),
-            permitTransferFrom.permitted.token,
-            permitTransferFrom.permitted.amount
-        ));
+        bytes32 tokenPermissionsHash = keccak256(abi.encode(keccak256("TokenPermissions(address token,uint256 amount)"), permitTransferFrom.permitted.token, permitTransferFrom.permitted.amount));
 
         // 计算 PermitTransferFrom 哈希
         bytes32 permitTransferFromHash = keccak256(
@@ -79,11 +74,7 @@ contract TestTokenBankPremit2Test is Test {
         );
 
         // 计算最终签名消息
-        bytes32 digest = keccak256(abi.encodePacked(
-            "\x19\x01",
-            permit2.DOMAIN_SEPARATOR(),
-            permitTransferFromHash
-        ));
+        bytes32 digest = keccak256(abi.encodePacked("\x19\x01", permit2.DOMAIN_SEPARATOR(), permitTransferFromHash));
 
         // 使用 signUser 的私钥签名
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(signUserPrivateKey, digest);
