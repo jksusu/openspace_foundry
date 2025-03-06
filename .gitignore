@@ -15,3 +15,4 @@ docs/
 .node_modules/
 broadcast/
 .DS_Store
+.idea/
