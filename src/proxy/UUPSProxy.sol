@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
-contract UUPSProxy is Initializable, UUPSUpgradeable, OwnableUpgradeable {
-    function initialize() initializer public {
-        __Ownable_init();
+contract UUPSProxy is ERC1967Proxy {
+    constructor(address implementation, bytes memory _data) ERC1967Proxy(implementation, _data) { }
+    receive() external payable {
+        // 接收以太币的函数
     }
-
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 }

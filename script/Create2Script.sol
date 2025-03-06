@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
-import  "../src/create/Factroy.sol";
+import "../src/create/Factroy.sol";
 import "../src/create/Traget.sol";
 
 contract Create2Script is Script {
