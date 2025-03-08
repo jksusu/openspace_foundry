@@ -5,18 +5,30 @@ import { Test, console } from "forge-std/Test.sol";
 import { OldNftMarket } from "../../src/proxy/OldNftMarket.sol";
 import { V2NftMarket } from "../../src/proxy/V2NftMarket.sol";
 import { UUPSProxy } from "../../src/proxy/UUPSProxy.sol";
+import { Nft } from "../../src/proxy/Nft.sol";
 
 contract TestUUPSTest is Test {
     OldNftMarket oldNftMarket;
     UUPSProxy proxy;
     V2NftMarket v2NftMarket;
+
+    Nft nft;
+    uint256 nftPrice;
+    uint256 tokenId;
+
     address owner;
     address sellerUser;
+    uint256 sellerUserKey;
 
     function setUp() public {
-        //初始化管理员
         owner = makeAddr("owner");
-        sellerUser = makeAddr("sellerUser");
+        (sellerUser , sellerUserKey) = makeAddrAndKey("sellerUser");
+
+        nft = new Nft();
+
+        vm.startPrank(sellerUser);
+        tokenId = nft.mintNFT("https://baidu.com");
+        vm.stopPrank();
     }
 
     function testList() public {
@@ -53,11 +65,27 @@ contract TestUUPSTest is Test {
 
         //上架v2
         vm.startPrank(sellerUser);
-        bytes memory listv2 = abi.encodeWithSignature("list(uint256,address,uint256)", 2, sellerUser, 100);
+        //批量授权
+        nft.setApprovalForAll(address(proxy), true); 
+        //查询授权是否成功
+        assert(nft.isApprovedForAll(sellerUser, address(proxy)));
+
+        //对nft上架进行签名
+        uint256 nonceId = v2NftMarket.nonces(sellerUser);
+        uint256 expireTime = block.timestamp + 1 hours;
+        console.log("nonceId", nonceId);
+        console.log("expireTime", expireTime);
+
+        //签名
+        bytes32 hash = keccak256(abi.encodePacked(tokenId, address(nft), nftPrice, expireTime, nonceId));
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(sellerUserKey, hash);
+        bytes memory sign = abi.encodePacked(r, s, v);
+
+        bytes memory listv2 = abi.encodeWithSignature("list(address,uint256,address,uint256,uint256,uint256,bytes)",address(proxy),tokenId, address(nft), nftPrice, expireTime, nonceId, sign);
         (bool successv2,) = address(proxy).call(listv2);
         assert(successv2);
 
-        bytes memory getByTokenv2Id = abi.encodeWithSignature("getByTokenId(uint256)", 2);
+        bytes memory getByTokenv2Id = abi.encodeWithSignature("getByTokenId(uint256)", tokenId);
         (, bytes memory getResv2) = address(proxy).call(getByTokenv2Id);
         assert(abi.decode(getResv2, (address)) == sellerUser);
         vm.stopPrank();
