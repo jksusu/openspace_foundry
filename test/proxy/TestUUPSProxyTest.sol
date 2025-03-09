@@ -22,7 +22,7 @@ contract TestUUPSTest is Test {
 
     function setUp() public {
         owner = makeAddr("owner");
-        (sellerUser , sellerUserKey) = makeAddrAndKey("sellerUser");
+        (sellerUser, sellerUserKey) = makeAddrAndKey("sellerUser");
 
         nft = new Nft();
 
@@ -66,7 +66,7 @@ contract TestUUPSTest is Test {
         //上架v2
         vm.startPrank(sellerUser);
         //批量授权
-        nft.setApprovalForAll(address(proxy), true); 
+        nft.setApprovalForAll(address(proxy), true);
         //查询授权是否成功
         assert(nft.isApprovedForAll(sellerUser, address(proxy)));
 
@@ -81,7 +81,7 @@ contract TestUUPSTest is Test {
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(sellerUserKey, hash);
         bytes memory sign = abi.encodePacked(r, s, v);
 
-        bytes memory listv2 = abi.encodeWithSignature("list(address,uint256,address,uint256,uint256,uint256,bytes)",address(proxy),tokenId, address(nft), nftPrice, expireTime, nonceId, sign);
+        bytes memory listv2 = abi.encodeWithSignature("list(address,uint256,address,uint256,uint256,uint256,bytes)", address(proxy), tokenId, address(nft), nftPrice, expireTime, nonceId, sign);
         (bool successv2,) = address(proxy).call(listv2);
         assert(successv2);
 

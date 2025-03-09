@@ -26,7 +26,7 @@ contract V2NftMarket is UUPSUpgradeable, OwnableUpgradeable {
         __Ownable_init(owner);
     }
 
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner { }
 
     // 普通上架，不进行检查
     function list(address proxyAddress, uint256 tokenId, address nftAddress, uint256 price, uint256 expireTime, uint256 nonce, bytes memory signature) public {
