@@ -23,7 +23,7 @@ contract TestTokenBankPremit2Test is Test {
     uint256 signUserPrivateKey = 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a; // 签名用户私钥
 
     function setUp() public {
-        // vm.createSelectFork("http://127.0.0.1:8545");
+        vm.createSelectFork("http://127.0.0.1:8545");
         vm.startPrank(owner);
 
         // 假设 Permit2 已经在指定地址部署
