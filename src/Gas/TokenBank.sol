@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 import { IAllowanceTransfer } from "permit2/src/interfaces/IAllowanceTransfer.sol";
 import { ISignatureTransfer } from "permit2/src/interfaces/ISignatureTransfer.sol";
 import { IPermit2 } from "permit2/src/interfaces/Ipermit2.sol";
-import {Erc20TokenPremit2} from "../tokenBank/Erc20TokenPremit2.sol";
+import { Erc20TokenPremit2 } from "../tokenBank/Erc20TokenPremit2.sol";
 
 contract TokenBank {
     Erc20TokenPremit2 public erc20TokenPremit2;
@@ -15,10 +15,10 @@ contract TokenBank {
 
     uint256 public total;
 
-    address constant init = address(1);//初始地址
+    address constant init = address(1); //初始地址
 
     event Deposit(address indexed user, uint256 amount); //存款事件
-    event NextAddress(address prev, address next); 
+    event NextAddress(address prev, address next);
 
     // constructor(Erc20TokenPremit2 _tokenAddress, address _permit2) {
     //     erc20TokenPremit2 = _tokenAddress;
@@ -26,7 +26,7 @@ contract TokenBank {
     //     _nextBalance[init] = init;
     // }
 
-     constructor() {
+    constructor() {
         _nextBalance[init] = init;
     }
 
@@ -46,7 +46,7 @@ contract TokenBank {
     // }
 
     function deposit(address prevAddress, uint256 amount) public {
-        require(_nextBalance[prevAddress] != address(0),"prev address not exist");
+        require(_nextBalance[prevAddress] != address(0), "prev address not exist");
         // require(_verifyIndex(prevAddress, amount, _nextBalance[prevAddress]),"index verify failed");
         _saveNext(prevAddress, msg.sender);
         tokenBalanceOf[msg.sender] += amount;
@@ -61,9 +61,10 @@ contract TokenBank {
         _nextBalance[_address] = _prevAddress;
         total++;
 
-        emit NextAddress(_prevAddress,_address);
+        emit NextAddress(_prevAddress, _address);
     }
     //验证连表中的位置是否正确
+
     function _verifyIndex(address prev, uint256 newValue, address next) internal view returns (bool) {
         //上一个是初始地址 或者 上一个地址 的余额要大于 新地址余额； 且 下一个要等于初始地址 或者 当前余额要大于下一个地址的余额
         return (prev == init || tokenBalanceOf[prev] >= newValue) && (next == init || newValue > tokenBalanceOf[next]);
@@ -73,7 +74,7 @@ contract TokenBank {
         return tokenBalanceOf[userAddress];
     }
 
-    function getTop(uint256 number) public view returns (address[] memory) { 
+    function getTop(uint256 number) public view returns (address[] memory) {
         require(number <= total, "number is too large");
         address[] memory result = new address[](number);
         address current = _nextBalance[init];

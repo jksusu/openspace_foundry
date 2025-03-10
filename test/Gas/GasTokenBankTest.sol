@@ -41,7 +41,7 @@ contract GasTokenBankTest is Test {
     function testDepositTest() public {
         //第一个用户存款
         vm.startPrank(user1);
-        console.log("one",initAddress);
+        console.log("one", initAddress);
         tokenBank.deposit(initAddress, 10 ether);
         assertEq(tokenBank.tokenBalanceOf(user1), 10 ether);
         vm.stopPrank();
@@ -76,12 +76,12 @@ contract GasTokenBankTest is Test {
         assertEq(tokenBank.tokenBalanceOf(user7), 4 ether);
         vm.stopPrank();
 
-         vm.startPrank(user8);
+        vm.startPrank(user8);
         tokenBank.deposit(user7, 3 ether);
         assertEq(tokenBank.tokenBalanceOf(user8), 3 ether);
         vm.stopPrank();
 
-         vm.startPrank(user9);
+        vm.startPrank(user9);
         tokenBank.deposit(user8, 2 ether);
         assertEq(tokenBank.tokenBalanceOf(user9), 2 ether);
         vm.stopPrank();
@@ -100,5 +100,4 @@ contract GasTokenBankTest is Test {
         address[] memory addressArr = tokenBank.getTop(10);
         assertEq(addressArr.length, 10);
     }
-    
 }
