@@ -25,7 +25,7 @@ contract AirdopMerkleNFTMarket {
 
     function permitPrePay(address from, uint256 amount, uint256 deadline, bytes memory sign) public {
         if (block.timestamp > deadline) revert DeadlineExpired();
-        (uint8 v, bytes32 r, bytes32 s) = abci.decode(sign, (uint8, bytes32, bytes32));
+        (uint8 v, bytes32 r, bytes32 s) = abi.decode(sign, (uint8, bytes32, bytes32));
         token.permit(from, address(this), amount, deadline, v, r, s);
         // bool success = token.transferFrom(from, address(this), amount);
         // if (!success) revert TransferFailed();
