@@ -5,10 +5,7 @@ interface AutomationCompatibleInterface {
     function performUpkeep(bytes calldata performData) external;
 }
 
-/**
- * 测试 https://automation.chain.link
- * 阈值hook
- */
+
 contract EthBank {
     mapping(address => uint256) public balanceOf;
 

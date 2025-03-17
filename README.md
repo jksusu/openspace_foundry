@@ -48,3 +48,10 @@ DOMAIN_SEPARATOR
 管理类（invalidateUnorderedNonces）：管理 nonce，增强安全性。
 查询类（allowance, nonceBitmap, DOMAIN_SEPARATOR）：提供授权和状态查询。
 ```
+
+```sh
+
+
+开源验证合约
+forge verify-contract  --chain-id 11155111 --compiler-version v0.8.28 --watch  --force 0xD24BC2ba5649DADBb960Be2192c8A7B4d9e51e58 src/chainlink/EthBank.sol:EthBank
+```
