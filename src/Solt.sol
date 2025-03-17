@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.26;
+
 contract Solt {
     string public name;
-    mapping (address => bool) privateapproved;
+    mapping(address => bool) privateapproved;
     address public owner;
 
-    modifier auth {
-        require (msg.sender == owner, "Not authorized");
+    modifier auth() {
+        require(msg.sender == owner, "Not authorized");
         _;
     }
 

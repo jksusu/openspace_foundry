@@ -14,7 +14,7 @@ contract AirdopMerkleNFTMarket {
     error TransferFailed();
 
     event NftBuy(address buyer, uint256 tokenId);
-    event Debug(uint8,bytes32,bytes32);
+    event Debug(uint8, bytes32, bytes32);
     event DebugStr(string);
 
     constructor(AksErc2612Token _tokenAddress, address _nftAddress) {

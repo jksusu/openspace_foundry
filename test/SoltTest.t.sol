@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-import {Test} from "forge-std/Test.sol";
-import {Solt} from "../src/Solt.sol";
+import { Test } from "forge-std/Test.sol";
+import { Solt } from "../src/Solt.sol";
 
 pragma solidity ^0.8.26;
 
 contract SoltTest is Test {
     Solt public contractInstance;
+
     function setUp() public {
         contractInstance = new Solt("MyWallet");
     }

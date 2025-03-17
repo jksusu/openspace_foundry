@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Test, console} from "forge-std/Test.sol";
+import { Test, console } from "forge-std/Test.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "../../src/nftMarket_study/AirdopMerkleNFTMarket.sol";
-import {MyNFT} from "../../src/nftMarket_study/myNft.sol";
-import {AksErc2612Token} from "../../src/eip2612Token/Eip2612Token.sol";
+import { MyNFT } from "../../src/nftMarket_study/myNft.sol";
+import { AksErc2612Token } from "../../src/eip2612Token/Eip2612Token.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 contract TestAirdropMerkleNFTMarketTest is Test {
@@ -59,13 +59,7 @@ contract TestAirdropMerkleNFTMarketTest is Test {
         uint256 nonce = token.nonces(seller);
         uint256 deadline = block.timestamp + 1000;
         bytes memory sign = permitSign(nonce, deadline);
-        bytes memory a = abi.encodeWithSignature(
-            "permitPrePay(address,uint256,uint256,bytes)",
-            seller,
-            amount,
-            deadline,
-            sign
-        );
+        bytes memory a = abi.encodeWithSignature("permitPrePay(address,uint256,uint256,bytes)", seller, amount, deadline, sign);
         console.logBytes(a);
         market.permitPrePay(seller, amount, deadline, sign);
 
@@ -79,27 +73,11 @@ contract TestAirdropMerkleNFTMarketTest is Test {
     }
 
     // 修改签名编码方式，确保与解码一致
-    function permitSign(
-        uint256 nonce,
-        uint256 deadline
-    ) private view returns (bytes memory) {
+    function permitSign(uint256 nonce, uint256 deadline) private view returns (bytes memory) {
         bytes32 domainSeparator = token.DOMAIN_SEPARATOR();
-        bytes32 permitTypehash = keccak256(
-            "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
-        );
-        bytes32 structHash = keccak256(
-            abi.encode(
-                permitTypehash,
-                seller,
-                address(market),
-                amount,
-                nonce,
-                deadline
-            )
-        );
-        bytes32 digest = keccak256(
-            abi.encodePacked("\x19\x01", domainSeparator, structHash)
-        );
+        bytes32 permitTypehash = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+        bytes32 structHash = keccak256(abi.encode(permitTypehash, seller, address(market), amount, nonce, deadline));
+        bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domainSeparator, structHash));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(signUserPrivateKey, digest);
         return abi.encode(v, r, s); // 使用abi.encode代替abi.encodePacked
     }

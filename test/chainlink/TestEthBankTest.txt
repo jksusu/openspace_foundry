@@ -1,0 +1,49 @@
+No files changed, compilation skipped
+
+Ran 1 test for test/chainlink/TestEthBankTest.s.sol:TestEthBankTest
+[PASS] testDeposit() (gas: 71422)
+Logs:
+  0x0000000000000000000000007c8999dc9a822c1f0df42023113edb4fdd543266
+  account: 0x7c8999dC9a822c1f0Df42023113EDB4FDd543266
+  upkeepNeeded: true
+  _performDataAddress: 0x7c8999dC9a822c1f0Df42023113EDB4FDd543266
+  owner eth: 1
+
+Traces:
+  [71422] TestEthBankTest::testDeposit()
+    ├─ [0] VM::deal(ECRecover: [0x0000000000000000000000000000000000000001], 1000000000000000000 [1e18])
+    │   └─ ← [Return] 
+    ├─ [0] VM::prank(ECRecover: [0x0000000000000000000000000000000000000001])
+    │   └─ ← [Return] 
+    ├─ [24129] EthBank::depositETH{value: 1000000000000000000}()
+    │   ├─ emit Deposit(user: ECRecover: [0x0000000000000000000000000000000000000001], amount: 1000000000000000000 [1e18])
+    │   └─ ← [Stop] 
+    ├─ [0] VM::assertEq(1000000000000000000 [1e18], 1000000000000000000 [1e18]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    ├─ [0] VM::startPrank(chainlinkUser: [0xDbD8a0fa321f5542cF60f7A59014E2486b8Cd1F8])
+    │   └─ ← [Return] 
+    ├─ [0] console::log(0x0000000000000000000000007c8999dc9a822c1f0df42023113edb4fdd543266) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("account: %s", owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [1245] EthBank::checkUpkeep(0x0000000000000000000000007c8999dc9a822c1f0df42023113edb4fdd543266) [staticcall]
+    │   └─ ← [Return] true, 0x0000000000000000000000007c8999dc9a822c1f0df42023113edb4fdd543266
+    ├─ [0] console::log("upkeepNeeded:", true) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("_performDataAddress: %s", owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [10186] EthBank::performUpkeep(0x0000000000000000000000007c8999dc9a822c1f0df42023113edb4fdd543266)
+    │   ├─ [0] owner::fallback{value: 1000000000000000000}()
+    │   │   └─ ← [Stop] 
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("owner eth:", 1) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 544.75µs (122.67µs CPU time)
+
+Ran 1 test suite in 263.77ms (544.75µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
