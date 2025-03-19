@@ -6,7 +6,7 @@ import { EthBank } from "../../src/chainlink/EthBank.sol";
 
 contract TestEthBankTest is Test {
     EthBank ethBank;
-    address owner ;
+    address owner;
     address user1 = address(0x1);
     address chainlinkUser;
 
@@ -22,7 +22,7 @@ contract TestEthBankTest is Test {
     function testDeposit() public {
         vm.deal(user1, 1 ether);
         vm.prank(user1);
-        ethBank.depositETH{value: 1 ether}();
+        ethBank.depositETH{ value: 1 ether }();
         assertEq(address(ethBank).balance, 1 ether);
         vm.stopPrank();
 

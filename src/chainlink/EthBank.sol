@@ -5,7 +5,6 @@ interface AutomationCompatibleInterface {
     function performUpkeep(bytes calldata performData) external;
 }
 
-
 contract EthBank {
     mapping(address => uint256) public balanceOf;
 
@@ -19,7 +18,7 @@ contract EthBank {
     function checkUpkeep(bytes calldata checkData) external view returns (bool upkeepNeeded, bytes memory performData) {
         upkeepNeeded = false;
         if (address(this).balance > 0) {
-             upkeepNeeded = true;
+            upkeepNeeded = true;
         }
         performData = checkData;
         return (upkeepNeeded, performData);
