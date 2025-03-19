@@ -20,18 +20,20 @@ contract TestStakingPool is Test {
         kk = new KK();
         stakingPool = new StakingPool(address(kk));
 
+        //给所有用户加余额
+        vm.deal(alice, 10 ether);
+        vm.deal(bob, 10 ether);
+
         IERC20(address(kk)).approve(address(stakingPool), 100e18); //授权给质押池
         vm.stopPrank();
     }
 
     function testStake() public {
-        uint256 stakeAmount = 1 ether; //质押金额
-        vm.deal(alice, 1 ether);
+        uint256 stakeAmount = 1 ether;
         vm.startPrank(alice);
+        uint256 aliceOldETHBalance = address(alice).balance;
         stakingPool.stake{ value: stakeAmount }();
-        //验证eth是否为零
-        assertEq(address(alice).balance, 0, "Incorrect0 ETH balance after staking");
-        //验证质押总量，我的质押数量，最后区块是否被改变
+        assertEq(address(alice).balance, aliceOldETHBalance - stakeAmount, "Incorrect0 ETH balance after staking");
         assertEq(stakingPool.getStakesETHTotal(), stakeAmount, "Incorrect total staked ETH");
         assertEq(stakingPool.getLastBlock(), block.number, "Incorrect last block");
         assertEq(stakingPool.balanceOf(alice), stakeAmount, "Incorrect user staking balance");
@@ -43,25 +45,15 @@ contract TestStakingPool is Test {
         vm.deal(bob, stakeAmount);
         vm.startPrank(bob);
         stakingPool.stake{ value: stakeAmount }();
-        //验证eth是否为零
-        assertEq(address(bob).balance, 0, "Incorrect1 ETH balance after staking");
-        uint256 newLastBlock = stakingPool.getLastBlock(); //新的最后区块
+
+        assertEq(address(bob).balance, address(bob).balance - stakeAmount, "Incorrect1 ETH balance after staking");
+        uint256 newLastBlock = stakingPool.getLastBlock();
 
         //验证最新的数量是否 = + old 数量
         assertEq(stakingPool.getStakesETHTotal(), oldStakesETHTotal + stakeAmount, "Incorrect2 total staked ETH");
         assertEq(newLastBlock, oldLastBlock, "Incorrect last block");
         assertEq(stakingPool.balanceOf(bob), stakeAmount, "Incorrect user staking balance");
-
-        //验证 alice 用户的质押奖励是否正确
-        // uint256 blockNumber = newLastBlock - oldLastBlock;
-        // uint256 reward = blockNumber * 1e18;
-
-
-
-
         IERC20(kk).balanceOf(alice);
-
-
         vm.stopPrank();
     }
 }

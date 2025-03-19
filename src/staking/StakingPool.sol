@@ -11,12 +11,13 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
 contract StakingPool is Ownable, ReentrancyGuard {
     mapping(address => uint256) public stakes;     // 用户质押记录
     mapping(address => uint256) public unclaimed;  // 待领取的收益
-    mapping(address => uint256) public rewardDebt; // 奖励债务
+    mapping(address => uint256) public rewardDebt; // 已经领取的总数，下一次计算的时候再减去这个值
 
     uint256 public stakesETHTotal;                 // 质押ETH总量
     uint256 public lastBlock;                      // 上次更新奖励的区块
     uint256 public accRewardPerShare;              // 每单位质押量的累计奖励
-    uint256 constant public BLOCK_REWARD = 10 ether; // 每个区块10 KK Token
+    uint256 constant public BLOCK_REWARD = 10e18; // 每个区块10 KK Token
+    uint256 constant public MIN_STAKE_AMOUNT = 1 ether; // 最小质押金额
     
     address public KKToken;
 
@@ -48,7 +49,7 @@ contract StakingPool is Ownable, ReentrancyGuard {
      * @dev 质押 ETH 到合约
      */
     function stake() external payable nonReentrant {
-        require(msg.value > 0, "Amount must be greater than 0");
+        require(msg.value >= MIN_STAKE_AMOUNT, "Amount Min");
         
         _updatePool();
         
