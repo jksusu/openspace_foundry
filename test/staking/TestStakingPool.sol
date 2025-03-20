@@ -24,7 +24,7 @@ contract TestStakingPool is Test {
         vm.deal(alice, 10 ether);
         vm.deal(bob, 10 ether);
 
-        IERC20(address(kk)).approve(address(stakingPool), 100e18); //授权给质押池
+        IERC20(address(kk)).approve(address(stakingPool), 1e12); //授权给质押池
         vm.stopPrank();
     }
 
